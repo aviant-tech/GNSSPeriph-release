@@ -18,7 +18,7 @@ void AP_Periph_DroneCAN::can_gps_update(void)
     }
 
     // we need to record this time as its reset when we call gps.update()
-    uint32_t last_message_local_time_us = gps.last_pps_time_usec();
+    uint64_t last_message_local_time_us = gps.last_pps_time_usec();
     gps.update();
     send_moving_baseline_msg();
     send_relposheading_msg();
@@ -30,9 +30,9 @@ void AP_Periph_DroneCAN::can_gps_update(void)
     uavcan_protocol_GlobalTimeSync ts {};
     for (uint8_t i=0; i<HAL_NUM_CAN_IFACES; i++) {
         uint8_t idx; // unused
-        if (gps.status() < AP_GPS::GPS_OK_FIX_3D &&
-            !gps.is_healthy() &&
-            !gps.first_unconfigured_gps(idx)) {
+        if ((gps.status() < AP_GPS::GPS_OK_FIX_3D) ||
+            !gps.is_healthy() ||
+            gps.first_unconfigured_gps(idx)) {
             // no good fix and no healthy GPS, so we don't send timesync
             break;
         }
