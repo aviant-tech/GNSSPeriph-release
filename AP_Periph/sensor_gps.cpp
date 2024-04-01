@@ -89,8 +89,13 @@ void AP_Periph_DroneCAN::can_gps_update(void)
         }
         pkt.longitude_deg_1e8 = uint64_t(loc.lng) * 10ULL;
         pkt.latitude_deg_1e8 = uint64_t(loc.lat) * 10ULL;
-        pkt.height_ellipsoid_mm = loc.alt * 10;
         pkt.height_msl_mm = loc.alt * 10;
+        float undulation = 0.0f;
+        if (AP::gps().get_undulation(undulation)) {
+            pkt.height_ellipsoid_mm = loc.alt * 10 - undulation * 1000;
+        } else {
+            pkt.height_ellipsoid_mm = 0.0f;
+        }
         for (uint8_t i=0; i<3; i++) {
             pkt.ned_velocity[i] = vel[i];
         }
