@@ -58,6 +58,7 @@ public:
         k_param_imu_sample_rate,
         k_param_imu,
         k_param_gps_safeboot,
+        k_param_gps_rover,
     };
 
     AP_Int16 format_version;

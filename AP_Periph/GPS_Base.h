@@ -3,7 +3,15 @@
 #include <AP_GPS/RTCM3_Parser.h>
 
 #ifdef ENABLE_BASE_MODE
-
+struct date_time {
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
+    uint32_t utc_sec;
+};
 class GPS_Base {
 public:
     GPS_Base();
@@ -14,9 +22,8 @@ public:
     bool enabled() const { return _enabled; } 
 
     static const struct AP_Param::GroupInfo var_info[];
-
+    static void gps_week_time(struct date_time &dt, const uint16_t week, const uint32_t tow);
 private:
-    void gps_week_time(const uint16_t week, const uint32_t tow);
     void parse_runtime_ubx(uint8_t byte);
     void _update_checksum(uint8_t *data, uint16_t len, uint8_t &ck_a, uint8_t &ck_b);
     bool _send_message(uint8_t msg_class, uint8_t msg_id, const void *msg, uint16_t size);
@@ -195,16 +202,7 @@ private:
 
     int ubx_file = -1;
 
-    struct date_time {
-        uint16_t year;
-        uint8_t month;
-        uint8_t day;
-        uint8_t hour;
-        uint8_t minute;
-        uint8_t second;
-        uint32_t utc_sec;
-    } dt;
-
+    struct date_time dt;
     bool gps_received_preamble;
     bool gcs_received_preamble;
     uint8_t gps_length_counter;

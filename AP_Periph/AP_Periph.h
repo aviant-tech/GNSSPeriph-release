@@ -33,6 +33,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include "MAVLink.h"
 #include "GPS_Base.h"
+#include "GPS_Rover.h"
 
 #if defined(HAL_PERIPH_ENABLE_BATTERY_MPPT_PACKETDIGITAL) && HAL_MAX_CAN_PROTOCOL_DRIVERS < 2
 #error "Battery MPPT PacketDigital driver requires at least two CAN Ports"
@@ -230,6 +231,7 @@ public:
 
 #ifdef ENABLE_BASE_MODE
     GPS_Base gps_base;
+    GPS_Rover gps_rover;
 #endif
 
 #ifdef GPIO_UBX_SAFEBOOT

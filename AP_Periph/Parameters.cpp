@@ -206,6 +206,12 @@ const AP_Param::Info AP_Periph_FW::var_info[] = {
     GSCALAR(gps_safeboot, "GPS_SAFEBOOT", 0),
 #endif
 
+#ifdef ENABLE_BASE_MODE
+    // @Param: ROVER
+    // @Path: GPS_Rover.cpp
+    GOBJECT(gps_rover, "ROVER",  GPS_Rover),
+#endif
+
     AP_VAREND
 };
 

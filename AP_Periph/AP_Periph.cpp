@@ -257,6 +257,7 @@ void AP_Periph_FW::update()
 
 #ifdef ENABLE_BASE_MODE
     gps_base.update();
+    gps_rover.update();
 #endif
 
     SRV_Channels::enable_aux_servos();

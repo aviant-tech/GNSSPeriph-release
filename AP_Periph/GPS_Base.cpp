@@ -122,7 +122,7 @@ GPS_Base::GPS_Base() {
 }
 
 // convert week number and time of week to date/time
-void GPS_Base::gps_week_time(const uint16_t week, const uint32_t tow)
+void GPS_Base::gps_week_time(struct date_time &dt, const uint16_t week, const uint32_t tow)
 {
     // days since 1st epoch (6th Jan 1980)
     uint32_t days = (week * 7) + (tow / 86400000) + 5;
@@ -170,7 +170,7 @@ void GPS_Base::parse_runtime_ubx(uint8_t byte) {
         // handle RAWX message
         if (_class == CLASS_RXM && _msg_id == MSG_RXM_RAWX) {
             if (_buffer.raw_rawx.week > 0 && _buffer.raw_rawx.rcvTow >= 0) {
-                gps_week_time((uint16_t)_buffer.raw_rawx.week, (uint32_t)(_buffer.raw_rawx.rcvTow * 1000));
+                gps_week_time(dt, (uint16_t)_buffer.raw_rawx.week, (uint32_t)(_buffer.raw_rawx.rcvTow * 1000));
                 can_printf("GPS: %d-%02d-%02d %02d:%02d:%02d\n", dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second);
             }
         } else if (_class == CLASS_NAV && _msg_id == MSG_NAV_SVIN) {
@@ -178,7 +178,7 @@ void GPS_Base::parse_runtime_ubx(uint8_t byte) {
             if (_buffer.nav_svin.valid) {
                 can_printf("GPS: Survey in complete\n");
             }
-            if (_start_mean_acc == 0.0 && _buffer.nav_svin.active && (_buffer.nav_svin.meanAcc < (50*10000))) {
+            if (_start_mean_acc == 0 && _buffer.nav_svin.active && (_buffer.nav_svin.meanAcc < (50*10000))) {
                 _start_mean_acc = _buffer.nav_svin.meanAcc;
             }
             memcpy(&curr_svin, &_buffer.nav_svin, sizeof(curr_svin));
@@ -526,7 +526,7 @@ void GPS_Base::do_configurations()
             if ((AP_HAL::millis() - _last_surveyin_config_ms) > 1000) {
                 can_printf("GPS_Base: Setting survey in config");
                 ubx_cfg_tmode3 surveyin_cfg {};
-                if (_s_in_lat == 0.0 && _s_in_lon == 0.0 && _s_in_alt == 0.0) {
+                if (int(_s_in_lat*1000) == 0 && int(_s_in_lon*1000) == 0 && int(_s_in_alt*1000) == 0) {
                     surveyin_cfg.flags = 1;
                     surveyin_cfg.fixedPosAcc = 0;
                     surveyin_cfg.svinAccLimit = _s_in_acc*10000.0;
