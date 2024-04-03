@@ -164,7 +164,7 @@ void AP_Periph_FW::init()
 #endif
 
     if (gps.get_type(0) != AP_GPS::GPS_Type::GPS_TYPE_NONE && enable_gps) {
-        gps.init(serial_manager);
+        gps.init();
     } else {
 #ifdef GPIO_USART1_RX
         // setup gpio passthrough
@@ -178,8 +178,6 @@ void AP_Periph_FW::init()
     }
 
 #ifdef I2C_SLAVE_ENABLED
-    i2c_event_handle.set_source(&i2c_event_source);
-    i2c_event_handle.register_event(1);
     i2c_setup();
 #endif
 

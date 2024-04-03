@@ -21,7 +21,6 @@
 
 #include <AP_RTC/JitterCorrection.h>
 #include <AP_HAL/CANIface.h>
-#include <AP_HAL_ChibiOS/EventSource.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 #include <ch.h>
 #include <AP_DroneCAN/AP_Canard_iface.h>
@@ -181,9 +180,6 @@ public:
     uint8_t i2c2_transfer_address;
     uint8_t i2c2_transfer_direction;
     bool _setup_ser_i2c_mode;
-
-    HAL_EventHandle i2c_event_handle;
-    ChibiOS::EventSource i2c_event_source;
 #endif
 
     static AP_Periph_FW *_singleton;
@@ -366,6 +362,8 @@ namespace AP
 extern AP_Periph_FW periph;
 
 extern "C" {
+void can_vprintf(uint8_t severity, const char *fmt, va_list arg);
+void can_printf_severity(uint8_t severity, const char *fmt, ...) FMT_PRINTF(2,3);
 void can_printf(const char *fmt, ...) FMT_PRINTF(1,2);
 }
 
