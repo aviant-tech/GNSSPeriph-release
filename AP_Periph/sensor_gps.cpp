@@ -13,10 +13,6 @@
 void AP_Periph_DroneCAN::can_gps_update(void)
 {
     auto &gps = periph.gps;
-    if (gps.get_type(0) == AP_GPS::GPS_Type::GPS_TYPE_NONE) {
-        return;
-    }
-
     // we need to record this time as its reset when we call gps.update()
     uint64_t last_message_local_time_us = gps.last_pps_time_usec();
     gps.update();

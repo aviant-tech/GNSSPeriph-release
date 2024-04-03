@@ -218,6 +218,9 @@ public:
 
     void show_progress(uint32_t pct);
 
+    // reboot the peripheral, optionally holding in bootloader
+    void reboot(bool hold_in_bootloader);
+
     static uint64_t get_tracked_tx_timestamp(uint8_t i);
 
 #ifdef HAL_USB_VBUS_SENS_CHAN
