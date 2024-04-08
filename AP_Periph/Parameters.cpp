@@ -33,6 +33,7 @@ extern const AP_HAL::HAL &hal;
 #define MAV_SYSTEM_ID HAL_DEFAULT_MAV_SYSTEM_ID
 #endif
 
+#define GSCALAR_HIDDEN(v, name, def)                { name, &AP_PARAM_VEHICLE_NAME.g.v,                   {def_value : def},                   AP_PARAM_FLAG_HIDDEN,                                                  Parameters::k_param_ ## v,          AP_PARAM_VEHICLE_NAME.g.v.vtype }
 /*
  *  AP_Periph parameter definitions
  *
@@ -100,6 +101,11 @@ const AP_Param::Info AP_Periph_FW::var_info[] = {
     // @Path: ../libraries/AP_GPS/AP_GPS.cpp
     GOBJECT(gps, "GPS", AP_GPS),
 
+    // GPS TYPE
+    // @Param: GPS_TYPE
+    // @DisplayName: GPS Type
+    // @Description: GPS Type
+    GSCALAR_HIDDEN(gps_type, "GPS_TYPE", 0),
 
 #ifdef HAL_PERIPH_ENABLE_MAG
     // @Group: COMPASS_

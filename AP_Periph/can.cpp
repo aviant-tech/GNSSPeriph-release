@@ -190,8 +190,8 @@ void AP_Periph_DroneCAN::handle_param_getset(const CanardRxTransfer& transfer, c
 
     uavcan_protocol_param_GetSetResponse pkt {};
 
-    AP_Param *vp;
-    enum ap_var_type ptype;
+    AP_Param *vp, *gps_type_vp;
+    enum ap_var_type ptype, gps_type_ptype;
 
     if (req.name.len != 0 && req.name.len > AP_MAX_NAME_SIZE) {
         vp = nullptr;
@@ -204,6 +204,11 @@ void AP_Periph_DroneCAN::handle_param_getset(const CanardRxTransfer& transfer, c
         if (vp != nullptr) {
             vp->copy_name_token(token, (char *)pkt.name.data, AP_MAX_NAME_SIZE+1, true);
         }
+    }
+    if ((req.name.len >= 8) && (strncmp((char* )req.name.data, "GPS_TYPE", 8) == 0) && (req.value.union_tag == UAVCAN_PROTOCOL_PARAM_VALUE_INTEGER_VALUE)) {
+        // set GPS1_TYPE as well
+        gps_type_vp = AP_Param::find("GPS1_TYPE", &gps_type_ptype);
+        ((AP_Int8*)gps_type_vp)->set_and_save_ifchanged(req.value.integer_value);
     }
     if (vp != nullptr && req.name.len != 0 && req.value.union_tag != UAVCAN_PROTOCOL_PARAM_VALUE_EMPTY) {
         // param set

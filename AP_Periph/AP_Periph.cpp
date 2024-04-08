@@ -208,6 +208,10 @@ void AP_Periph_FW::init()
         }
     }
 
+    float value;
+    AP_Param::get("GPS1_TYPE", value);
+    AP_Param::set_and_save_by_name("GPS_TYPE", value);
+
 #if AP_SCRIPTING_ENABLED
     scripting.init();
 #endif

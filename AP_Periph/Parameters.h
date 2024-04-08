@@ -59,6 +59,7 @@ public:
         k_param_imu,
         k_param_gps_safeboot,
         k_param_gps_rover,
+        k_param_gps_type
     };
 
     AP_Int16 format_version;
@@ -105,6 +106,7 @@ public:
     AP_Int8 gps_mb_only_can_port;
     AP_Int16 imu_sample_rate;
     AP_Int8 gps_safeboot;
+    AP_Int8 gps_type;
     Parameters() {}
 };
 
