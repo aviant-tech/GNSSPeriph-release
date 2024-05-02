@@ -45,6 +45,7 @@ public:
         k_param_sysid_this_mav,
         k_param_serial_manager,
         k_param_gps_mb_only_can_port,
+        k_param_gps_rtk_flt,
         k_param_scripting,
         k_param_can_fdmode,
         k_param_can_fdbaudrate0,
@@ -104,6 +105,7 @@ public:
     AP_Int8 node_stats;
     AP_Int8 cubeid_fw_update_enabled;
     AP_Int8 gps_mb_only_can_port;
+    AP_Int8 gps_rtk_flt;
     AP_Int16 imu_sample_rate;
     AP_Int8 gps_safeboot;
     AP_Int8 gps_type;

@@ -260,6 +260,11 @@ void AP_Periph_DroneCAN::send_relposheading_msg() {
  */
 void AP_Periph_DroneCAN::handle_RTCMStream(const CanardRxTransfer& transfer, const uavcan_equipment_gnss_RTCMStream &req)
 {
+    // Ignore transmission if it doesn't match filter
+    if (periph.g.gps_rtk_flt != 0 && transfer.source_node_id != periph.g.gps_rtk_flt){
+        return;
+    }
+
     periph.gps.handle_gps_rtcm_fragment(0, req.data.data, req.data.len);
 }
 
@@ -269,6 +274,10 @@ void AP_Periph_DroneCAN::handle_RTCMStream(const CanardRxTransfer& transfer, con
 #if GPS_MOVING_BASELINE
 void AP_Periph_DroneCAN::handle_MovingBaselineData(const CanardRxTransfer& transfer, const ardupilot_gnss_MovingBaselineData &msg)
 {
+    // Ignore transmission if it doesn't match filter
+    if (periph.g.gps_rtk_flt != 0 && transfer.source_node_id != periph.g.gps_rtk_flt){
+        return;
+    }
     periph.gps.inject_MBL_data((uint8_t*)msg.data.data, msg.data.len);
     Debug("MovingBaselineData: len=%u\n", msg.data.len);
 }
