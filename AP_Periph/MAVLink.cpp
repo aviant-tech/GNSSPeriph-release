@@ -174,7 +174,7 @@ void MAVLink_Periph::handle_odid_heartbeat(const mavlink_message_t &msg)
     if (packet.type == MAV_TYPE_ODID && !cubeid_fw_updated && periph.g.cubeid_fw_update_enabled) {
         // open firmware from ROMFS
         if (cubeid_fw_fd == -1) {
-            cubeid_fw_fd = AP::FS().open("@ROMFS//CubeID_fw.bin", O_RDONLY);
+            cubeid_fw_fd = AP::FS().open("@ROMFS/CubeID_fw.bin", O_RDONLY);
             if (cubeid_fw_fd < 0) {
                 can_printf("Failed to open CubeID_fw.bin %d %d", cubeid_fw_fd, errno);
                 return;
