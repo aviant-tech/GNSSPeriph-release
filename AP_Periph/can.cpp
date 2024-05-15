@@ -706,6 +706,15 @@ void AP_Periph_FW::can_update()
         dronecan->can_mag_update();
         dronecan->can_baro_update();
     }
+    // push log messages as well
+    while (log_buffer.available()) {
+        uavcan_protocol_debug_LogMessage msg {};
+        if (log_buffer.peek(msg) && dronecan->log_pub.broadcast(msg)) {
+            log_buffer.pop();
+        } else {
+            break;
+        }
+    }
     dronecan->canard_iface.process(1);
 }
 
@@ -751,7 +760,11 @@ void can_vprintf(uint8_t severity, const char *fmt, va_list ap)
 
         memcpy(pkt.text.data, &buffer_data[buffer_offset], pkt.text.len);
         buffer_offset += pkt.text.len;
-        periph.dronecan->log_pub.broadcast(pkt);
+        if (AP_Periph_FW::no_iface_finished_dna) {
+            periph.log_buffer.push(pkt);   
+        } else {
+            periph.dronecan->log_pub.broadcast(pkt);
+        }
     }
 }
 

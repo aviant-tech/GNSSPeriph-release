@@ -237,6 +237,8 @@ public:
 #ifdef GPIO_UBX_SAFEBOOT
     bool gps_in_safeboot;
 #endif
+
+    ObjectBuffer<uavcan_protocol_debug_LogMessage> log_buffer{20};
 };
 
 
