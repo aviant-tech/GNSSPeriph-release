@@ -85,7 +85,7 @@ const AP_Param::Info AP_Periph_FW::var_info[] = {
     // @Param: DEBUG
     // @DisplayName: Debug
     // @Description: Debug
-    // @Bitmask: 0:Show free stack space, 2:Enable sending stats
+    // @Bitmask: 0:Show free stack space, 2:Enable sending stats, 3: Show serial stats
     // @User: Advanced
     GSCALAR(debug, "DEBUG", 0),
 

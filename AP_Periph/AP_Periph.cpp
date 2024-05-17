@@ -285,9 +285,24 @@ void AP_Periph_FW::update()
     }
 
     static uint32_t last_debug_ms;
-    if (debug_option_is_set(DebugOptions::SHOW_STACK) && now - last_debug_ms > 5000) {
+    if (now - last_debug_ms > 5000) {
         last_debug_ms = now;
-        show_stack_free();
+        if (debug_option_is_set(DebugOptions::SHOW_STACK)) {
+            show_stack_free();
+        }
+#if HAL_UART_STATS_ENABLED
+        if (debug_option_is_set(DebugOptions::SERIAL_STATS)) {
+            for (uint8_t i = 0; i < HAL_UART_NUM_SERIAL_PORTS; i++) {
+                auto *uart = hal.serial(i);
+                if (uart && uart->is_initialized()) {
+                    uart_info.printf("SERIAL%u ", i);
+                    uart->uart_info(uart_info);
+                    can_printf("%s", uart_info.get_string());
+                    uart_info.reset();
+                }
+            }
+        }
+#endif
     }
 
     static uint32_t fiftyhz_last_update_ms;

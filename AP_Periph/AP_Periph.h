@@ -34,10 +34,7 @@
 #include "MAVLink.h"
 #include "GPS_Base.h"
 #include "GPS_Rover.h"
-
-#if defined(HAL_PERIPH_ENABLE_BATTERY_MPPT_PACKETDIGITAL) && HAL_MAX_CAN_PROTOCOL_DRIVERS < 2
-#error "Battery MPPT PacketDigital driver requires at least two CAN Ports"
-#endif
+#include <AP_Common/ExpandingString.h>
 
 
 #include "Parameters.h"
@@ -188,6 +185,7 @@ public:
     enum class DebugOptions {
         SHOW_STACK = 0,
         ENABLE_STATS = 2,
+        SERIAL_STATS = 3,
     };
     // check if an option is set
     bool debug_option_is_set(const DebugOptions option) const {
@@ -239,6 +237,8 @@ public:
 #endif
 
     ObjectBuffer<uavcan_protocol_debug_LogMessage> log_buffer{20};
+
+    ExpandingString uart_info;
 };
 
 
