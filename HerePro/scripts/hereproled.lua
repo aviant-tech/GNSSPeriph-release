@@ -69,7 +69,7 @@ end
 Function to send a color to a LED
 --]]
 function set_LED(r, g, b, id)
-  notify:handle_rgb_id(math.floor(r*brightness/100), math.floor(g*brightness/100), math.floor(b*brightness/100), id)
+  serialLED:set_RGB(1, id, math.floor(r*brightness/100), math.floor(g*brightness/100), math.floor(b*brightness/100))
 end
 
 --[[
@@ -270,7 +270,18 @@ function update() -- this is the loop which periodically runs
   animation_state_machine(vehicle_state)
   -- get parameter NTF_LED_BRIGHT
   brightness = param:get('NTF_LED_BRIGHT')
-  
+
+  -- switch case for brightness
+  if brightness == 0 then
+    brightness = 0
+  elseif brightness == 1 then
+    brightness = 20
+  elseif brightness == 2 then
+    brightness = 50
+  elseif brightness == 3 then
+    brightness = 100
+  end
+
   -- Initialisation
   if current_anim == 0 then
     do_initialisation()
@@ -317,6 +328,7 @@ function update() -- this is the loop which periodically runs
       total_time = total_time + next_call
     end
   end
+  serialLED:send(1)
   -- gcs:send_text(0, string.format("NCALL: %s", tostring(next_call)))
   return update, next_call -- reschedules the loop in next_call milliseconds
 end
