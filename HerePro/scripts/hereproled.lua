@@ -1,7 +1,6 @@
 -- This script is a test of led override
 
 local count = 0
-local num_leds = 16
 local total_time = 1
 local animation_end = 0
 local current_anim = 0
@@ -37,10 +36,10 @@ local rainbow = {
   { 51,   255, 20 },
   { 27,   3,   163 }
 }
-
+-- 0-49
 local led_map = {
-  14,
-  15,
+  0,
+  1,
   2,
   3,
   4,
@@ -49,12 +48,49 @@ local led_map = {
   7,
   8,
   9,
-  1,
-  0,
   10,
   11,
   12,
-  13}
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49
+}
+
+local led_len = 50
 
 function table.contains(table, element)
   for _, value in pairs(table) do
@@ -91,7 +127,7 @@ function do_initialisation()
   local v  =0.5 + 0.5 * math.sin(pos)
   local invert = 1
   local r, g, b = get_Rainbow(v, 5)
-  local led_trail_length = 3
+  local led_trail_length = 10
   local softness = 10
   local bfact = 1
   local updated_leds = {}
@@ -101,7 +137,7 @@ function do_initialisation()
     invert = 0
   end
 
-  pos = math.floor(6 + (v*8))%16
+  pos = math.floor(6 + (v*(led_len/2)))%led_len
   if pos == 6 then
     animation_end = 1
   else
@@ -114,24 +150,24 @@ function do_initialisation()
     else
       bfact = softness^(2*trail/(led_trail_length-1))
     end
-    local led_id = 1 + ((pos + trail) % num_leds)
+    local led_id = 1 + ((pos + trail) % led_len)
     set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[led_id])
     table.insert(updated_leds, led_id)
   end
 
-  pos = math.floor(6 - (v*8))%16
+  pos = math.floor(6 - (v*(led_len/2)))%led_len
   for trail = 0, led_trail_length-1 do
     if invert == 0 then
       bfact = softness^(2*(led_trail_length - 1 - trail)/(led_trail_length-1))
     else
       bfact = softness^(2*trail/(led_trail_length-1))
     end
-    local led_id = 1 + ((pos + trail) % num_leds)
+    local led_id = 1 + ((pos + trail) % led_len)
     set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[led_id])
     table.insert(updated_leds, led_id)
   end
 
-  for led = 1, num_leds do
+  for led = 1, led_len do
     if not table.contains(updated_leds, led) then
       set_LED(0, 0, 0, led_map[led])
     end
@@ -139,19 +175,26 @@ function do_initialisation()
 end
 
 function do_point_north(r, g, b, led_trail_length, softness)
-  local north_bias = 4
-  local yaw = 8 - ((16 * periph:get_yaw_earth()/(2*math.pi))) - north_bias
+  local yaw = (led_len * periph:get_yaw_earth()/(2*math.pi))
   local ofs = yaw - math.floor(yaw+0.5)
-  yaw = math.floor(yaw+0.5) % 16
+  yaw = math.floor(yaw+0.5) % led_len
   local updated_leds = {}
   for trail = 0, led_trail_length-1 do
     local bfact = softness^(2*(math.abs((led_trail_length-1)/2 - trail + ofs))/(led_trail_length-1))
-    local led_id = 1 + ((yaw + trail) % 16)
+    local led_id = 1 + ((yaw + trail) % led_len)
     set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[led_id])
     table.insert(updated_leds, led_id)
   end
 
-  for led = 1, num_leds do
+  -- also do LEDs on the other side of the circle
+  yaw = (yaw + ((led_len)/2)) % led_len
+  for trail = 0, led_trail_length-1 do
+    local bfact = softness^(2*(math.abs((led_trail_length-1)/2 - trail + ofs))/(led_trail_length-1))
+    local led_id = 1 + ((yaw + trail) % led_len)
+    set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[led_id])
+    table.insert(updated_leds, led_id)
+  end
+  for led = 1, led_len do
     if not table.contains(updated_leds, led) then
       set_LED(0, 0, 0, led_map[led])
     end
@@ -161,9 +204,9 @@ end
 
 function finish_initialisation(r, g, b, led_trail_length, softness, speed_factor, next_call)
   local north_bias = 4
-  local yaw = 8 - ((16 * periph:get_yaw_earth()/(2*math.pi))) - north_bias
-  yaw = math.floor(yaw+0.5) % 16
-  local led_id = math.floor((count/speed_factor) + north_bias) % 16
+  local yaw = (led_len/2) - ((led_len * periph:get_yaw_earth()/(2*math.pi))) - north_bias
+  yaw = math.floor(yaw+0.5) % led_len
+  local led_id = math.floor((count/speed_factor) + north_bias) % led_len
   if yaw == led_id then
     if total_time > 3000 then
       animation_end = 1
@@ -174,12 +217,12 @@ function finish_initialisation(r, g, b, led_trail_length, softness, speed_factor
   local updated_leds = {}
   for trail = 0, led_trail_length-1 do
     local bfact = softness^(2*(math.abs((led_trail_length-1)/2 - trail))/(led_trail_length-1))
-    local this_led_id = 1 + ((led_id + trail) % 16)
+    local this_led_id = 1 + ((led_id + trail) % led_len)
     set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[this_led_id])
     table.insert(updated_leds, this_led_id)
   end
 
-  for led = 1, num_leds do
+  for led = 1, led_len do
     if not table.contains(updated_leds, led) then
       set_LED(0, 0, 0, led_map[led])
     end
@@ -210,12 +253,12 @@ function do_arm_spin(r, g, b, softness, speed_factor, arming)
   -- create a trail
   for trail = 0, led_trail_length-1 do
     local bfact = softness^(led_trail_length - trail)
-    local led_id = 1 + (count + trail) % 16
+    local led_id = 1 + (count + trail) % led_len
     set_LED(math.floor(r/bfact), math.floor(g/bfact), math.floor(b/bfact), led_map[led_id])
     table.insert(updated_leds, led_id)
   end
 
-  for led = 1, num_leds do
+  for led = 1, led_len do
     if not table.contains(updated_leds, led) then
       set_LED(0, 0, 0, led_map[led])
     end
@@ -224,7 +267,7 @@ function do_arm_spin(r, g, b, softness, speed_factor, arming)
 end
 
 function set_all(r, g, b)
-  for led = 1, num_leds do
+  for led = 1, led_len do
     set_LED(r, g, b, led_map[led])
   end
 end
@@ -304,7 +347,7 @@ function update() -- this is the loop which periodically runs
       v = 1.0
     end
     local r, g, b = get_Rainbow(v, 4)
-    count = do_point_north(r, g, b, 5, 20)
+    count = do_point_north(r, g, b, 10, 20)
   -- --[[ ARM Display
   elseif current_anim == 3 then
     if animation_end == 0 then
