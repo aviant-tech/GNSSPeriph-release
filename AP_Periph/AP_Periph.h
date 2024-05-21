@@ -52,6 +52,11 @@ extern const app_descriptor_t app_descriptor;
 
 class AP_Periph_DroneCAN;
 
+extern "C" {
+    void can_vprintf(uint8_t severity, const char *fmt, va_list arg);
+    void can_printf_severity(uint8_t severity, const char *fmt, ...) FMT_PRINTF(2,3);
+    void can_printf(const char *fmt, ...) FMT_PRINTF(1,2);
+}
 class AP_Periph_FW {
 public:
     AP_Periph_FW();
@@ -65,6 +70,8 @@ public:
         }
         return _singleton;
     }
+
+    static constexpr auto can_printf = ::can_printf;
 
     void init();
     void update();
@@ -369,10 +376,3 @@ namespace AP
 }
 
 extern AP_Periph_FW periph;
-
-extern "C" {
-void can_vprintf(uint8_t severity, const char *fmt, va_list arg);
-void can_printf_severity(uint8_t severity, const char *fmt, ...) FMT_PRINTF(2,3);
-void can_printf(const char *fmt, ...) FMT_PRINTF(1,2);
-}
-
