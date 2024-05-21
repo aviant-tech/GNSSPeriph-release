@@ -6,6 +6,18 @@ local animation_end = 0
 local current_anim = 0
 local brightness = 0
 
+-- the table key must be used by only one script on a particular flight
+-- controller. If you want to re-use it then you need to wipe your old parameters
+-- the key must be a number between 0 and 200. The key is persistent in storage
+local PARAM_TABLE_KEY = 72
+local PARAM_TABLE_PREFIX = "ANIM_"
+assert(param:add_table(PARAM_TABLE_KEY, PARAM_TABLE_PREFIX, 1), 'could not ANIM_ add param table')
+
+function bind_add_param(name, idx, default_value)
+  assert(param:add_param(PARAM_TABLE_KEY, idx, name, default_value), string.format('could not add param %s', name))
+  return Parameter(PARAM_TABLE_PREFIX .. name)
+end
+local enable = bind_add_param('ENABLE', 1, 1)
 -- constrain a value between limits
 function constrain(v, vmin, vmax)
   if v < vmin then
@@ -308,6 +320,9 @@ function animation_state_machine(vehicle_state)
 end
 
 function update() -- this is the loop which periodically runs
+  if enable:get() == 0 then
+    return update, 1000
+  end
   local next_call = 20
   local vehicle_state = periph:get_vehicle_state()
   animation_state_machine(vehicle_state)
