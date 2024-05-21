@@ -332,9 +332,11 @@ public:
     Canard::StaticCallback<uavcan_protocol_GlobalTimeSync> global_time_sync_callback{&AP_Periph_DroneCAN::handle_global_time_sync};
     Canard::Subscriber<uavcan_protocol_GlobalTimeSync> global_time_sync_sub{global_time_sync_callback, 0};
 
+#if AP_SCRIPTING_ENABLED
     static void handle_notify_state(const CanardRxTransfer& transfer, const ardupilot_indication_NotifyState &msg);
     Canard::StaticCallback<ardupilot_indication_NotifyState> notify_state_callback{&AP_Periph_DroneCAN::handle_notify_state};
     Canard::Subscriber<ardupilot_indication_NotifyState> notify_state_sub{notify_state_callback, 0};
+#endif
 
     static void handle_remoteid_location(const CanardRxTransfer& transfer, const dronecan_remoteid_Location &msg);
     Canard::StaticCallback<dronecan_remoteid_Location> remoteid_location_callback{&AP_Periph_DroneCAN::handle_remoteid_location};

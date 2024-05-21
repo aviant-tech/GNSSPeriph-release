@@ -38,6 +38,7 @@ void AP_Periph_DroneCAN::handle_lightscommand(const CanardRxTransfer& transfer, 
     }
 }
 
+#if AP_SCRIPTING_ENABLED
 void AP_Periph_DroneCAN::handle_notify_state(const CanardRxTransfer& transfer, const ardupilot_indication_NotifyState &msg)
 {
     if (msg.aux_data.len == 2 && msg.aux_data_type == ARDUPILOT_INDICATION_NOTIFYSTATE_VEHICLE_YAW_EARTH_CENTIDEGREES) {
@@ -48,6 +49,7 @@ void AP_Periph_DroneCAN::handle_notify_state(const CanardRxTransfer& transfer, c
     periph.vehicle_state = msg.vehicle_state;
     periph.last_vehicle_state = AP_HAL::millis();
 }
+#endif
 
 /*
   rotating rainbow pattern on startup
@@ -59,7 +61,11 @@ void AP_Periph_FW::update_rainbow()
         return;
     }
 #endif
-    if (led_cmd_override) {
+    if (led_cmd_override
+#if AP_SCRIPTING_ENABLED
+     || AP::scripting()->enabled()
+#endif
+     ) {
         return;
     }
     uint32_t now = AP_HAL::millis();
