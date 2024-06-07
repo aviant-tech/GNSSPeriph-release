@@ -190,6 +190,14 @@ const AP_Param::Info AP_Periph_FW::var_info[] = {
     GSCALAR(gps_mb_only_can_port, "GPS_MB_ONLY_PORT", 0),
 #endif
 
+// @Param: GPS_RTK_FLT
+// @DisplayName: RTK data filter: Only accept RTK corrections from the following UAVCAN ids
+// @Description: Only accept
+// @Values: 0: Disabled, Other values: UAVCAN node id.
+// @User: Advanced
+// @RebootRequired: True
+GSCALAR(gps_rtk_flt, "GPS_RTK_FLT", 0),
+
 #if AP_INERTIALSENSOR_ENABLED
     // @Param: IMU_SAMPLE_RATE
     // @DisplayName: IMU Sample Rate
